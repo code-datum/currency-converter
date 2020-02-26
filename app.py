@@ -7,6 +7,7 @@ from flask import Flask, render_template, request
 import logging
 from logging import Formatter, FileHandler
 from forms import LoginForm
+from model import Exchange
 import os
 
 # ----------------------------------------------------------------------------#
@@ -54,6 +55,11 @@ def login():
     return render_template('forms/login.html', form=form)
 
 
+@app.route('/convert')
+def convert():
+
+    exchange = Exchange()
+    pass
 # Error handlers.
 
 
