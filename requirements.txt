@@ -1,8 +1,6 @@
-Fabric
-Flask-SQLAlchemy
+Flask
 Flask-WTF
 WTForms
 coverage
-# ecdsa
-# paramiko
-# pycrypto
+pytest
+flask-restful
