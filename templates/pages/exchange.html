@@ -17,45 +17,46 @@
                             <div class="row">
                                 <h3 class="">{{ from_currency['value'] }} {{ from_currency['title'] }} equals</h3>
                                 <h3>{{ to_currency['value'] }} {{ to_currency['title'] }}</h3>
-                                <div class="subtitle">{{ date }}</div>
+                                <div class="subtitle">The currency is actually for {{ today }}</div>
                             </div>
 
                         </div>
-                         <form role="form">
-                                <div class="row">
-                                    <div class="col-xs-6 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <input type="text" name=currency_val" id="currency_val"
-                                                   class="form-control input-sm" placeholder="Currency value">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <select class="form-control input-sm" placeholder="Choose currency">
-                                                <option value="">CAD</option>
-                                                <option value="">USD</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-6 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <input type="text" name=currency_val" id="currency_val"
-                                                   class="form-control input-sm" placeholder="Currency value">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <select class="form-control input-sm" placeholder="Choose currency">
-                                                <option value="">CAD</option>
-                                                <option value="">USD</option>
-                                            </select>
-                                        </div>
+                        <form method="post" action="" role="form" style="margin-top: 10px;">
+                            {{ form.hidden_tag() }}
+                            <div class="row">
+                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                    <div class="form-group">
+                                        {% if form.currency_val.errors %}
+                                            {{ form.currency_val(class="form-control form-control-lg is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.currency_val.errors %}
+                                                    <span>{ {{ error }} }</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.currency_val(class="form-control input-sm", id="currency_val", placeholder="Currency value") }}
+                                        {% endif %}
                                     </div>
                                 </div>
-                                <input type="submit" value="Register" class="btn btn-info btn-block">
-                            </form>
+                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                    <div class="form-group">
+                                        {{ form.select_currency(class="form-control input-sm", placeholder="Choose currency") }}
+                                    </div>
+                                </div>
+                                <div class="col-xs-4 col-sm-4 col-md-4">
+                                    <div class="form-group">
+                                        {{ form.select_converted(class="form-control input-sm", placeholder="Choose currency") }}
+                                    </div>
+                                </div>
+                            </div>
+                            {#Converted part#}
+                            <div class="row">
+
+                            </div>
+                            {#End converted part#}
+
+                            {{ form.submit(class="btn btn-info btn-block") }}
+                        </form>
                     </div>
                 </div>
             </div>
