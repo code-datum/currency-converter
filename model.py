@@ -1,30 +1,48 @@
+import logging
+from urllib.parse import urlencode
+import requests
+
+BASE_API_URL = 'https://api.exchangeratesapi.io'
+DECIMAL_KEY = 2
+# Enable logging
+logging.basicConfig(filename='error.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 class Exchange:
+
     def __init__(self):
         pass
 
-    def test_exchange(value, from_currency, to_currency='USD'):
-        logger.info("test_exchange function is run")
-        content = get_latest_currency_api(url=BASE_API_URL, code=from_currency)
-        from_currency_unit = content['rates'][to_currency]
+    def convert(self, value, from_currency, to_currency='USD'):
+        error = {}
+        '''
+        convert currency use extend api
+        :param value:
+        :param from_currency:
+        :param to_currency:
+        :return decimal:
+        '''
+        logger.info("Exchange.convert is run")
+        query_general = {
+            'code': to_currency
+        }
+        content = self.query_to_api('general', query_general)
+        if 'rates' in content:
+            from_currency_unit = content['rates'][to_currency]
+            converted_money = round(float(value) * from_currency_unit, DECIMAL_KEY)
 
-        if type(value) is str:
-            split_value = value.split('$')
-            logger.info(split_value)
-            if len(split_value) == 2:
-                logger.info('{}'.format(float(split_value[0])))
-                converted_money = round(float(split_value[0]) * from_currency_unit, DECIMAL_KEY)
-            else:
-                converted_money = 0
-                logger.error('enter incorrect data')
-        elif type(value) is float or type(value) is int:
-            converted_money = round(value * from_currency_unit, DECIMAL_KEY)
+            logger.info("converted currency: %s", converted_money)
+            logger.info("Exchange.convert is run")
         else:
-            logger.error('enter incorrect data')
-            converted_money = 0
-        logger.info("converted currency: %s", converted_money)
-        logger.info("test_exchange function is run")
+            logging.error("data isn't got")
+            error = {"msg": "Currency isn't get from API"}
+            converted_money = None
 
-    def query_to_api(type_query, args):
+        return converted_money, error
+
+    def query_to_api(self, type_query, args):
         if type_query == 'general':
             prefix_url = '/latest?' + urlencode({'base': args['code']})
             content = requests.get(url=BASE_API_URL + prefix_url).json()
@@ -37,3 +55,6 @@ class Exchange:
             content = requests.get(url=BASE_API_URL + prefix_url).json()
         logger.info("query_url's result:{}".format(content))
         return content
+
+    def get_currency_title(self, code):
+        return code
