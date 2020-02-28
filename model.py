@@ -2,7 +2,6 @@ import logging
 from urllib.parse import urlencode
 import requests
 
-
 DECIMAL_INDEX = 2
 # Enable logging
 logging.basicConfig(filename='debug.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -30,10 +29,10 @@ class Exchange:
         :return decimal:
         '''
         logger.info("Exchange.convert is run")
-        content = self.query_to_api('latest', {'code': from_currency})
+        content = self.get_latest_currency(from_currency)
         if 'rates' in content:
             to_currency_unit = content['rates'][to_currency]
-            converted_money = round(value * to_currency_unit, self.round_index)
+            converted_money = round(float(value) * to_currency_unit, self.round_index)
 
             logger.info("converted currency: %s", converted_money)
             logger.info("Exchange.convert is run")
@@ -69,3 +68,7 @@ class Exchange:
             return currencies_title[code]
         else:
             return None
+
+    def get_latest_currency(self, from_currency):
+        return self.query_to_api('latest', {'code': from_currency})
+
