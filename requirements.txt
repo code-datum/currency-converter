@@ -4,3 +4,5 @@ WTForms
 coverage
 pytest
 flask-restful
+mongoengine >= 0.19.1
+httpie
