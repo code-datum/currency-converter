@@ -8,3 +8,9 @@ venv
 screenshots/
 
 _updated/
+
+temp/
+
+\.token
+
+debug\.log

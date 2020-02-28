@@ -2,11 +2,13 @@
 # Imports
 # ----------------------------------------------------------------------------#
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, url_for, flash, redirect
+import pytest
 # from flask.ext.sqlalchemy import SQLAlchemy
 import logging
 from logging import Formatter, FileHandler
-from forms import LoginForm
+from datetime import date
+from forms import ExchangeForm
 from model import Exchange
 import os
 
@@ -16,53 +18,71 @@ import os
 
 app = Flask(__name__)
 app.config.from_object('config')
+
+
 # db = SQLAlchemy(app)
 
-# Automatically tear down SQLAlchemy.
-'''
-@app.teardown_request
-def shutdown_session(exception=None):
-    db_session.remove()
-'''
 
-# Login required decorator.
-'''
-def login_required(test):
-    @wraps(test)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return test(*args, **kwargs)
-        else:
-            flash('You need to login first.')
-            return redirect(url_for('login'))
-    return wrap
-'''
+# ----------------------------------------------------------------------------#
+# procedures
+# ----------------------------------------------------------------------------#
+
 
 
 # ----------------------------------------------------------------------------#
 # Controllers.
 # ----------------------------------------------------------------------------#
 
-@app.route('/index')
-@app.route('/')
-def home():
-    return render_template('pages/home.html')
+
+@app.route('/', methods=['GET', 'POST'])
+def exchange():
+    currency_val = None
+    currency_title = None
+    converted_val = None
+    converted_title = None
+    today = None
+    form = ExchangeForm()
+    if form.validate_on_submit():
+        '''TODO 
+        if everything is validated then give the data to Exchange methods
+        1. send to api
+        2. returned result to prepare and give to view
+        '''
+        flash(f'Currency converted', 'success')
+        currency_val = form.currency_val.data
+        currency_code = form.select_currency.data
+        converted_code = form.select_converted.data
+        # calculate data from input
+
+        exchange = Exchange()
+        currency_title = exchange.get_currency_title(currency_code)
+        converted_title = exchange.get_currency_title(converted_code)
+        converted_val, error = exchange.convert(currency_val, from_currency=currency_code, to_currency=converted_code)
+        if error:
+            flash(f'{error["msg"]}', 'error')
+        today = date.today()
+    else:
+        flash(f'Please fill the all fields', 'error')
+
+    from_currency = {'value': currency_val, 'title': currency_title}
+    to_currency = {'value': converted_val, 'title': converted_title}
+    return render_template('pages/exchange.html', form=form, from_currency=from_currency,
+                           to_currency=to_currency, today=today)
 
 
-@app.route('/login')
-def login():
-    form = LoginForm(request.form)
-    return render_template('forms/login.html', form=form)
+'''
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for {form.username.data}!', 'success')
+        return redirect(url_for('home'))
+    return render_template('pages/register.html', title='Register', form=form)
+
+'''
 
 
-@app.route('/convert')
-def convert():
-
-    exchange = Exchange()
-    pass
 # Error handlers.
-
-
 @app.errorhandler(500)
 def internal_error(error):
     # db_session.rollback()
