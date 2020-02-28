@@ -14,3 +14,11 @@ temp/
 \.token
 
 debug\.log
+
+*.log
+
+api-old\.py
+
+sample/latest\.json
+
+tests/
